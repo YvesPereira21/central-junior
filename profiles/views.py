@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from profiles.models import UserProfile
 from profiles.serializers import UserProfileModelSerializer, UserProfileUpdateModelSerializer, UserProfileDetailModelSerializer, UserProfileDeleteModelSerializer
@@ -31,6 +31,6 @@ class UserProfileDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [AllowAny()]
+            return [IsAuthenticated()]
 
         return [IsAuthenticated(), IsOwner()]

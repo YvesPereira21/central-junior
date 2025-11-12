@@ -1,6 +1,6 @@
 from rest_framework import generics
 from drf_spectacular.utils import extend_schema
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from credentials.models import Credential
 from credentials.serializers import CredentialModelSerializer, CredentialUpdateModelSerializer, CredentialDetailDeleteModelSerializer, CredentialVerifiedModelSerializer
 from profiles.models import UserProfile
@@ -37,11 +37,11 @@ class CredentialDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [AllowAny()]
+            return [IsAuthenticated()]
         elif self.request.method == 'DELETE':
             return [IsAuthenticated(), IsOwner()]
 
-        return [IsAuthenticated()]
+        return [IsAuthenticated(), IsOwner()]
 
 @extend_schema(
     tags=['Credential (Credencial)']
