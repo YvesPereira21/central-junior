@@ -1,0 +1,31 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Banco de Dados local
+*.sqlite3
+db.sqlite3
+
+# Arquivos de ambiente (ESSENCIAL PARA SEGURANÇA)
+# Mova sua SECRET_KEY para um arquivo .env
+.env
+.env.*
+
+# Arquivos de Mídia (Uploads de usuários)
+media/
+
+# Arquivos Estáticos (Gerados pelo collectstatic)
+staticfiles/
+
+# Arquivos de IDE e Sistema Operacional
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Ambiente Virtual
+.venv/
+venv/

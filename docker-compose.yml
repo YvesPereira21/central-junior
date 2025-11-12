@@ -1,0 +1,23 @@
+services:
+
+  central_junior_web:
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - central_junior_db
+
+  central_junior_db:
+    image: postgres:18
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: central_junior
+
+volumes:
+  postgres_data:
