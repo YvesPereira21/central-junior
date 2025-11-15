@@ -1,20 +1,29 @@
+from django.conf import settings
+from django.core.cache import caches
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 from questions.models import Question
-from questions.serializers import QuestionModelSerializer, QuestionDetailModelSerializer, QuestionSolutionedModelSerializer, QuestionDeleteModelSerializer
+from questions.serializers import QuestionModelSerializer, QuestionDetailModelSerializer, QuestionSolutionedModelSerializer, QuestionDeleteModelSerializer, QuestionListModelSerializer
 from profiles.models import UserProfile
 from profiles.permissions import IsOwner
 
 
+cache_view = caches['view_cache']
+
 @extend_schema(
     tags=['Question (Pergunta)']
 )
-class QuestionCreateView(generics.CreateAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionModelSerializer
+class QuestionCreateView(generics.ListCreateAPIView):
+    queryset = Question.objects.filter(is_published=True)
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return QuestionModelSerializer
+
+        return QuestionListModelSerializer
 
     def perform_create(self, serializer):
         get_user = self.request.user
@@ -22,6 +31,18 @@ class QuestionCreateView(generics.CreateAPIView):
 
         if get_profile:
             serializer.save(profile=get_profile)
+
+        cache_view.delete("list_all_question_published")
+
+    def list(self, request, *args, **kwargs):
+        key = "list_all_question_published"
+        cached_data = cache_view.get(key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
+        response = super().list(request, *args, **kwargs)
+        cache_view.set(key, response.data, timeout=settings.CACHE_TTL)
+        return response
 
 @extend_schema(
     tags=['Question (Pergunta)']
@@ -42,6 +63,18 @@ class QuestionDetailUpdateView(generics.RetrieveUpdateAPIView):
 
         return QuestionDetailModelSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        question = self.get_object()
+        key = f"question_detail_{question.pk}"
+
+        cached_data = cache_view.get(key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
+        response = super().retrieve(request, *args, **kwargs)
+        cache_view.set(key, response.data, timeout=settings.CACHE_TTL)
+        return response
+
 @extend_schema(
     tags=['Question (Pergunta)']
 )
@@ -57,6 +90,7 @@ class QuestionSolutionedView(generics.UpdateAPIView):
 class QuestionLikeToggleView(generics.GenericAPIView):
     queryset = Question.objects.all()
     serializer_class = serializers.Serializer
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, *args,**kwargs):
         question = self.get_object()
@@ -69,7 +103,6 @@ class QuestionLikeToggleView(generics.GenericAPIView):
         
         if profile in question.likes.all():
             question.likes.remove(profile)
-
         else:
             question.likes.add(profile)
         

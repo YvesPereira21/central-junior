@@ -1,5 +1,4 @@
 services:
-
   central_junior_web:
     build: .
     restart: always
@@ -7,6 +6,7 @@ services:
       - "8000:8000"
     depends_on:
       - central_junior_db
+      - central_junior_redis
 
   central_junior_db:
     image: postgres:18
@@ -19,5 +19,14 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: central_junior
 
+  central_junior_redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 volumes:
   postgres_data:
+  redis_data:

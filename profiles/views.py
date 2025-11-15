@@ -1,3 +1,8 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
+from django.conf import settings
+from django.db.models import Count, Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
@@ -10,8 +15,15 @@ from profiles.permissions import IsOwner
     tags=['Profile (Perfil)']
 )
 class UserProfileCreateView(generics.CreateAPIView):
-    queryset = UserProfile.objects.all()
     serializer_class = UserProfileModelSerializer
+
+    def get_queryset(self):
+        return UserProfile.objects.all().annotate(
+            articles_written=Count('article_author', distinct=True),
+            answers_accepted=Count('answer_author',
+                                   filter=Q(answer_author__is_accepted=True),
+                                   distinct=True)
+        )
 
 @extend_schema(
     tags=['Profile (Perfil)']
@@ -34,3 +46,8 @@ class UserProfileDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
             return [IsAuthenticated()]
 
         return [IsAuthenticated(), IsOwner()]
+
+    @method_decorator(cache_page(settings.CACHE_TTL, cache='view_cache', key_prefix='detail_profile'))
+    @method_decorator(vary_on_headers('Authorization'))
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)

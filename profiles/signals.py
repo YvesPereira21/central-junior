@@ -19,7 +19,6 @@ def change_level_user_profile(sender, instance, created, **kwargs):
 def get_level_for_score(score):
     for points, level in sorted(USER_LEVEL.items(), reverse=True):
         if score >= points:
-
             return level
 
     return USER_LEVEL[0]

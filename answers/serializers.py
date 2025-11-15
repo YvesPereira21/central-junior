@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_field
-from app.exceptions import RespostaJaAceita
+from app.exceptions import AnswerAlreadyAccepted
 from answers.models import Answer
 
 
@@ -39,6 +39,6 @@ class AnswerSolutionedModelSerializer(serializers.ModelSerializer):
             ).exclude(pk=self.instance.pk).exists()
 
             if already_accepted:
-                raise RespostaJaAceita
+                raise AnswerAlreadyAccepted
 
         return attrs
