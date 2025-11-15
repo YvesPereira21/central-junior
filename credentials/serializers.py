@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
-from app.exceptions import DataInvalida
+from app.exceptions import InvalidData
 from credentials.models import Credential
 
 
@@ -14,15 +14,15 @@ class CredentialModelSerializer(serializers.ModelSerializer):
         start_date = attrs.get('start_date')
         end_date = attrs.get('end_date')
         if start_date and start_date > timezone.now().date():
-            raise DataInvalida
+            raise InvalidData
 
         if start_date and end_date:
             if start_date > end_date:
-                raise DataInvalida
+                raise InvalidData
 
         return attrs
 
-class CredentialDetailDeleteModelSerializer(serializers.ModelSerializer):
+class CredentialDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Credential

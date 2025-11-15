@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema_field
 from django.contrib.auth.models import User, Group
 from profiles.models import UserProfile
-from credentials.serializers import CredentialDetailDeleteModelSerializer
+from credentials.serializers import CredentialDetailModelSerializer
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -44,22 +43,13 @@ class UserProfileUpdateModelSerializer(serializers.ModelSerializer):
 class UserProfileDetailModelSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
-    credentials = CredentialDetailDeleteModelSerializer(many=True, read_only=True)
-    articles_written = serializers.SerializerMethodField()
-    answers_accepted = serializers.SerializerMethodField()
+    credentials = CredentialDetailModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ['pk', 'first_name', 'last_name', 'bio', 'avatar', 'expertise', 'reputation_score', 'articles_written', 'answers_accepted', 'is_professional', 'credentials']
+        fields = ['pk', 'first_name', 'last_name', 'bio', 'avatar', 'expertise', 'reputation_score',
+                  'articles_written', 'answers_accepted', 'is_professional', 'credentials']
         extra_kwargs = {'pk': {'read_only': True}}
-
-    @extend_schema_field(serializers.IntegerField())
-    def get_articles_written(self, obj):
-        return obj.article_author.count()    
-
-    @extend_schema_field(serializers.IntegerField())
-    def get_answers_accepted(self, obj):
-        return obj.answer_author.filter(is_accepted=True).count()
 
 class UserProfileDeleteModelSerializer(serializers.ModelSerializer):
 

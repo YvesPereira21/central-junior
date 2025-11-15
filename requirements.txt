@@ -1,6 +1,7 @@
 asgiref==3.10.0
 attrs==25.4.0
 Django==5.2.7
+django-redis==6.0.0
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.29.0
@@ -13,6 +14,7 @@ psycopg2-binary==2.9.11
 PyJWT==2.10.1
 python-decouple==3.8
 PyYAML==6.0.3
+redis==7.0.1
 referencing==0.37.0
 rpds-py==0.28.0
 sqlparse==0.5.3
