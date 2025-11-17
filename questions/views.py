@@ -1,10 +1,14 @@
 from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import caches
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter, SearchFilter
 from drf_spectacular.utils import extend_schema
 from questions.models import Question
+from questions.filters import QuestionFilter
+from app.exceptions import ObjectNotFound
 from questions.serializers import QuestionModelSerializer, QuestionDetailModelSerializer, QuestionSolutionedModelSerializer, QuestionDeleteModelSerializer, QuestionListModelSerializer
 from profiles.models import UserProfile
 from profiles.permissions import IsOwner
@@ -15,9 +19,13 @@ cache_view = caches['view_cache']
 @extend_schema(
     tags=['Question (Pergunta)']
 )
-class QuestionCreateView(generics.ListCreateAPIView):
+class QuestionListCreateView(generics.ListCreateAPIView):
     queryset = Question.objects.filter(is_published=True)
     permission_classes = [IsAuthenticated]
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = QuestionFilter
+    search_fields = ['title', 'content']
+    ordering = ['-created_at']
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -91,16 +99,15 @@ class QuestionLikeToggleView(generics.GenericAPIView):
     queryset = Question.objects.all()
     serializer_class = serializers.Serializer
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request, *args,**kwargs):
         question = self.get_object()
 
         try:
             profile = request.user.profile
         except UserProfile.DoesNotExist:
-            return Response({"errors": 'Usuário não possui um perfil para dar like'},
-                            status=status.HTTP_401_UNAUTHORIZED)
-        
+            return ObjectNotFound()
+
         if profile in question.likes.all():
             question.likes.remove(profile)
         else:

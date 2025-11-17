@@ -1,11 +1,14 @@
+from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import caches
 from rest_framework import generics, serializers, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter, OrderingFilter
 from drf_spectacular.utils import extend_schema
-from django.conf import settings
 from articles.models import Article
 from articles.serializers import ArticleModelSerializer, ArticleDetailModelSerializer
+from articles.filters import ArticleFilter
 from profiles.models import UserProfile
 from profiles.permissions import IsOwner
 
@@ -18,6 +21,10 @@ cache_view = caches['view_cache']
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     permission_classes = [IsAuthenticated]
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = ArticleFilter
+    search_fields = ['title', 'content']
+    ordering = ['-created_at']
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
