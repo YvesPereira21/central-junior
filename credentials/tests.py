@@ -169,7 +169,6 @@ class CredentialAPITestCase(APITestCase):
         response_fail2 = self.client.post(self.url_create, data_without_institution_type_credential_and_experience, format='json')
         self.assertEqual(response_fail2.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_only_owner_can_see_your_own_unique_credential(self):
         response_unauthorized = self.client.get(self.url_detail)
         self.assertEqual(response_unauthorized.status_code, status.HTTP_401_UNAUTHORIZED)

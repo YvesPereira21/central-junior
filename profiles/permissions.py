@@ -10,6 +10,7 @@ class IsCustomerUser(BasePermission):
 
         return request.user.groups.filter(name='Customer profile')
 
+
 class IsOwner(BasePermission):
     message = "Você não tem permissão para isso"
 
@@ -22,6 +23,7 @@ class IsOwner(BasePermission):
 
         if hasattr(obj, 'author'):
             return obj.author.user == request.user
+
 
 class IsOwnerQuestion(BasePermission):
     message = "Apenas o dono da pergunta pode realizar essa ação"

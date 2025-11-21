@@ -13,6 +13,7 @@ from profiles.permissions import IsOwner, IsOwnerQuestion
 
 cache_view = caches['view_cache']
 
+
 @extend_schema(
     tags=['Answer (Resposta)']
 )
@@ -27,6 +28,7 @@ class AnswerCreateView(generics.CreateAPIView):
 
         if author:
             serializer.save(author=author)
+
 
 @extend_schema(
     tags=['Answer (Resposta)']
@@ -54,6 +56,7 @@ class AnswerListView(generics.ListAPIView):
 
         return response
 
+
 @extend_schema(
     tags=['Answer (Resposta)']
 )
@@ -72,6 +75,7 @@ class AnswerDetailDeleteView(generics.RetrieveUpdateDestroyAPIView):
             return AnswerDetailModelSerializer
 
         return AnswerUpdateModelSerializer
+
 
 @extend_schema(
     tags=['Answer (Resposta)']

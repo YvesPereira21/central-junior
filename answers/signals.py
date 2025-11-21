@@ -8,6 +8,7 @@ from questions.models import Question
 
 cache_view = caches['view_cache']
 
+
 @receiver(pre_save, sender=Answer)
 def verify_answer_has_solution_accepted(sender, instance, **kwargs):
     if instance.pk is None:
@@ -19,6 +20,7 @@ def verify_answer_has_solution_accepted(sender, instance, **kwargs):
         instance._answer_change_to_accepted = True
     if not instance.is_accepted and answer.is_accepted:
         instance._answer_want_be_revoked = True
+
 
 @receiver(post_save, sender=Answer)
 def created_answer(sender, instance, created, **kwargs):
@@ -37,6 +39,7 @@ def created_answer(sender, instance, created, **kwargs):
     elif want_be_revoked:
         return
 
+
 @receiver(post_delete, sender=Answer)
 def decrease_reputation_score(sender, instance, **kwargs):
     if instance.is_accepted:
@@ -53,9 +56,11 @@ def decrease_reputation_score(sender, instance, **kwargs):
     if instance.question_id:
         clear_question_cache(instance.question_id)
 
+
 def alter_is_solutioned(answer: Answer, state: bool):
     question = answer.question
     Question.objects.filter(pk=question.pk).update(is_solutioned=state)
+
 
 def clear_question_cache(question_pk):
     key = f"question_detail_{question_pk}"

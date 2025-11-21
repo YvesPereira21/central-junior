@@ -13,6 +13,7 @@ class TechnologyCreateView(generics.CreateAPIView):
     serializer_class = TechnologyModelSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 
+
 @extend_schema(
     tags=['Technology (Tecnologia)']
 )

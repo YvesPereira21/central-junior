@@ -22,13 +22,14 @@ class CredentialCreateView(generics.CreateAPIView):
         if profile:
             serializer.save(profile=profile)
 
+
 @extend_schema(
     tags=['Credential (Credencial)']
 )
 class CredentialDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Credential.objects.all()
     http_method_names = ['get', 'patch', 'put', 'delete', 'options', 'head']
-    
+
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
             return CredentialUpdateModelSerializer
@@ -43,6 +44,7 @@ class CredentialDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
             return [IsAuthenticated(), IsOwner()]
 
         return [IsAuthenticated(), IsOwner()]
+
 
 @extend_schema(
     tags=['Credential (Credencial)']

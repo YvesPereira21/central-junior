@@ -8,11 +8,13 @@ class TechnologyModelSerializer(serializers.ModelSerializer):
         model = Technology
         fields = '__all__'
 
+
 class TechnologyDetailUpdateDeleteModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Technology
         fields = '__all__'
+
 
 class TechnologyDetailSerializer(serializers.ModelSerializer):
 

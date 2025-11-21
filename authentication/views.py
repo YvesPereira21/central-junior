@@ -33,6 +33,7 @@ class LogoutView(APIView):
         except Exception as e:
             return Response({"erro": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class CustomTokenRefreshView(TokenRefreshView):
 
     def post(self, request, *args, **kwargs):
@@ -44,9 +45,9 @@ class CustomTokenRefreshView(TokenRefreshView):
                 if cache.get(f"blacklist: {jti}"):
                     raise InvalidToken("Erro de autenticação")
 
-            except jwt.exceptions.DecodeError as e:
+            except jwt.exceptions.DecodeError:
                 raise InvalidToken("Token mal formatado")
             except InvalidToken as e:
                 raise e
 
-        return super().post(request,*args, **kwargs)
+        return super().post(request, *args, **kwargs)

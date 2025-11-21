@@ -102,7 +102,7 @@ class ArticleAPITestCase(APITestCase):
             "title": "Como utilizar o Celery no Django",
             "content": "Para utilizar o Celery, siga os passos",
             "technologies": [self.techonology1.pk, self.techonology2.pk]
-            }
+        }
 
         response = self.client.post(self.url_post, data, format='json')
 

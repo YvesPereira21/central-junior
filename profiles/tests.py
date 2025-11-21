@@ -48,7 +48,7 @@ class ProfileAPITestCase(APITestCase):
         )
 
         self.url = reverse('details-profile', kwargs={'pk': self.profile.pk})
-    
+
     def tearDown(self) -> None:
         caches['default'].clear()
         caches['view_cache'].clear()
@@ -97,7 +97,7 @@ class ProfileAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.bio, "trabalho com cibersegurança")
-    
+
     def test_other_user_cannot_update_profile(self):
         self.client.force_authenticate(user=self.profile2.user)
         data = {"bio": "trabalho como engenheiro de software"}
@@ -109,7 +109,7 @@ class ProfileAPITestCase(APITestCase):
         self.profile.refresh_from_db()
         self.assertNotEqual(self.profile.bio, "trabalho como engenheiro de software")
         self.assertEqual(self.profile.bio, "test")
-    
+
     def test_only_owner_can_delete(self):
         self.client.force_authenticate(user=self.profile.user)
 

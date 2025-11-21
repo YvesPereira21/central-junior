@@ -9,13 +9,14 @@ class AnswerModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ['content', 'question']
-    
+
     def validate(self, attrs):
         question = attrs.get('question')
         if question and question.is_solutioned:
             raise AnswerAlreadyAccepted()
 
         return attrs
+
 
 class AnswerDetailModelSerializer(serializers.ModelSerializer):
     quantity_upvotes = serializers.SerializerMethodField()
@@ -24,17 +25,20 @@ class AnswerDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ['profile_name1', 'profile_name2', 'content', 'is_accepted', 'created_at', 'question', 'quantity_upvotes']
+        fields = ['profile_name1', 'profile_name2', 'content', 'is_accepted',
+                  'created_at', 'question', 'quantity_upvotes']
 
     @extend_schema_field(serializers.IntegerField())
     def get_quantity_upvotes(self, obj):
         return obj.upvotes.count()
+
 
 class AnswerUpdateModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
         fields = ['content']
+
 
 class AnswerSolutionedModelSerializer(serializers.ModelSerializer):
 

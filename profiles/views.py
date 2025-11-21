@@ -25,6 +25,7 @@ class UserProfileCreateView(generics.CreateAPIView):
                                    distinct=True)
         )
 
+
 @extend_schema(
     tags=['Profile (Perfil)']
 )

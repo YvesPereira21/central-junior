@@ -16,6 +16,7 @@ class QuestionModelSerializer(serializers.ModelSerializer):
         model = Question
         fields = ['title', 'content', 'technologies']
 
+
 class QuestionListModelSerializer(serializers.ModelSerializer):
     technologies = TechnologyDetailSerializer(many=True, read_only=True)
     quantity_likes = serializers.SerializerMethodField()
@@ -30,6 +31,7 @@ class QuestionListModelSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.IntegerField())
     def get_quantity_likes(self, obj):
         return obj.likes.count()
+
 
 class QuestionDetailModelSerializer(serializers.ModelSerializer):
     technologies = TechnologyDetailSerializer(many=True, read_only=True)
@@ -46,6 +48,7 @@ class QuestionDetailModelSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.IntegerField())
     def get_quantity_likes(self, obj):
         return obj.likes.count()
+
 
 class QuestionDeleteModelSerializer(serializers.ModelSerializer):
 

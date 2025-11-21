@@ -29,3 +29,6 @@ staticfiles/
 # Ambiente Virtual
 .venv/
 venv/
+
+.flake8
+requirements_dev.txt

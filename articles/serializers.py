@@ -15,6 +15,7 @@ class ArticleModelSerializer(serializers.ModelSerializer):
         model = Article
         fields = ['title', 'content', 'technologies']
 
+
 class ArticleDetailModelSerializer(serializers.ModelSerializer):
     profile_name1 = serializers.CharField(source='author.user.first_name')
     profile_name2 = serializers.CharField(source='author.user.last_name')

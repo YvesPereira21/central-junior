@@ -6,7 +6,7 @@ from technologies.models import Technology
 class Article(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField()
-    content = models.TextField(help_text="Corpo completo do artigo (suporta Markdown e snippets '```python')")    
+    content = models.TextField(help_text="Corpo completo do artigo (suporta Markdown e snippets '```python')")
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='article_author')

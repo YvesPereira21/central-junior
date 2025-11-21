@@ -73,7 +73,8 @@ class QuestionAPITestCase(APITestCase):
         self.question2.technologies.set([self.techonology3])
 
         self.answer = Answer.objects.create(
-            content='Você precisa fazer isso aqui:', author=self.profile2, 
+            content='Você precisa fazer isso aqui:',
+            author=self.profile2,
             question=self.question1
         )
 

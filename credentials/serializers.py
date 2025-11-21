@@ -26,11 +26,13 @@ class CredentialModelSerializer(serializers.ModelSerializer):
 
         return attrs
 
+
 class CredentialDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Credential
         fields = '__all__'
+
 
 class CredentialUpdateModelSerializer(serializers.ModelSerializer):
 
@@ -43,6 +45,7 @@ class CredentialUpdateModelSerializer(serializers.ModelSerializer):
             raise CredentialAlreadyAccepted
 
         return attrs
+
 
 class CredentialVerifiedModelSerializer(serializers.ModelSerializer):
 

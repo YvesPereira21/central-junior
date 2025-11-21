@@ -6,6 +6,7 @@ from profiles.models import UserProfile
 
 EXPERIENCE_LEVEL = {'JR': 100, 'PL': 300, 'SR': 500}
 
+
 @receiver(pre_save, sender=Credential)
 def detect_verification_change(sender, instance, **kwargs):
     if instance.pk is None:
@@ -20,6 +21,7 @@ def detect_verification_change(sender, instance, **kwargs):
         instance._verification_changed_to_true = True
     elif not instance.is_verified and old_instance.is_verified:
         instance._verification_revoked = True
+
 
 @receiver(post_save, sender=Credential)
 def transform_in_professional(sender, instance, created, **kwargs):
@@ -47,6 +49,7 @@ def transform_in_professional(sender, instance, created, **kwargs):
         if verifiy_quantity_credential == 0 and profile.is_professional:
             UserProfile.objects.filter(pk=profile.pk).update(is_professional=False)
 
+
 @receiver(post_delete, sender=Credential)
 def change_reputation_by_credential(sender, instance, **kwargs):
     profile = instance.profile
@@ -61,6 +64,7 @@ def change_reputation_by_credential(sender, instance, **kwargs):
         if count_quantity == 0 and profile.is_professional:
             UserProfile.objects.filter(pk=profile.pk).update(is_professional=False)
 
+
 def add_points(credential: Credential):
     profile = credential.profile
     points_to_add = EXPERIENCE_LEVEL.get(credential.experience)
@@ -69,6 +73,7 @@ def add_points(credential: Credential):
 
     profile.reputation_score += points_to_add
     profile.save(update_fields=['reputation_score'])
+
 
 def remove_points(credential: Credential):
     profile = credential.profile

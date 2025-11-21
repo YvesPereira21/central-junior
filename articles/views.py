@@ -16,6 +16,7 @@ from profiles.permissions import IsOwner
 
 cache_view = caches['view_cache']
 
+
 @extend_schema(
     tags=['Article (Artigo)']
 )
@@ -25,13 +26,13 @@ class ArticleListCreateView(generics.ListCreateAPIView):
     filterset_class = ArticleFilter
     search_fields = ['title', 'content']
     ordering = ['-created_at']
-    
+
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated()]
 
         return [AllowAny()]
-    
+
     def get_object(self):
         obj = super().get_object()
 
@@ -39,7 +40,7 @@ class ArticleListCreateView(generics.ListCreateAPIView):
             raise ObjectNotFound()
 
         return obj
-    
+
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return ArticleModelSerializer
@@ -65,6 +66,7 @@ class ArticleListCreateView(generics.ListCreateAPIView):
 
         cache_view.delete("list_article")
 
+
 @extend_schema(
     tags=['Article (Artigo)']
 )
@@ -77,7 +79,7 @@ class ArticleDetailDeleteView(generics.RetrieveDestroyAPIView):
             return [AllowAny()]
 
         return [IsOwner()]
-    
+
     def get_object(self):
         obj = super().get_object()
 
@@ -85,8 +87,8 @@ class ArticleDetailDeleteView(generics.RetrieveDestroyAPIView):
             raise ObjectNotFound()
 
         return obj
-    
-    def retrieve(self, request,*args, **kwargs):
+
+    def retrieve(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
         key = f"article_{pk}"
         cached_data = cache_view.get(key)
@@ -108,6 +110,7 @@ class ArticleDetailDeleteView(generics.RetrieveDestroyAPIView):
 
         return response
 
+
 @extend_schema(
     tags=['Article (Artigo)']
 )
@@ -124,5 +127,5 @@ class ArticleToggleView(generics.GenericAPIView):
             article.likes.remove(profile)
         else:
             article.likes.add(profile)
-        
+
         return Response({"likes_count": article.likes.count()}, status=status.HTTP_200_OK)

@@ -2,7 +2,7 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import caches
 from rest_framework import generics, serializers, status
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter, SearchFilter
 from drf_spectacular.utils import extend_schema
@@ -15,6 +15,7 @@ from profiles.permissions import IsOwner
 
 
 cache_view = caches['view_cache']
+
 
 @extend_schema(
     tags=['Question (Pergunta)']
@@ -31,7 +32,7 @@ class QuestionListCreateView(generics.ListCreateAPIView):
             return [IsAuthenticated()]
 
         return [AllowAny()]
-    
+
     def get_object(self):
         obj = super().get_object()
 
@@ -64,6 +65,7 @@ class QuestionListCreateView(generics.ListCreateAPIView):
         response = super().list(request, *args, **kwargs)
         cache_view.set(key, response.data, timeout=settings.CACHE_TTL)
         return response
+
 
 @extend_schema(
     tags=['Question (Pergunta)']
@@ -104,6 +106,7 @@ class QuestionDetailUpdateView(generics.RetrieveUpdateDestroyAPIView):
         cache_view.set(key, response.data, timeout=settings.CACHE_TTL)
         return response
 
+
 @extend_schema(
     tags=['Question (Pergunta)']
 )
@@ -112,7 +115,7 @@ class QuestionLikeToggleView(generics.GenericAPIView):
     serializer_class = serializers.Serializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args,**kwargs):
+    def post(self, request, *args, **kwargs):
         question = self.get_object()
 
         try:
@@ -124,6 +127,5 @@ class QuestionLikeToggleView(generics.GenericAPIView):
             question.likes.remove(profile)
         else:
             question.likes.add(profile)
-        
-        return Response({"likes_count": question.likes.count()}, 
-                        status=status.HTTP_200_OK)
+
+        return Response({"likes_count": question.likes.count()}, status=status.HTTP_200_OK)
