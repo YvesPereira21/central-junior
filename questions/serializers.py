@@ -40,7 +40,7 @@ class QuestionDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['title', 'content', 'is_solutioned', 'created_at', 
+        fields = ['title', 'content', 'is_solutioned', 'created_at', 'answers',
                   'technologies', 'profile_name1', 'profile_name2', 'quantity_likes']
 
     @extend_schema_field(serializers.IntegerField())
@@ -52,9 +52,3 @@ class QuestionDeleteModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ['is_published']
-
-class QuestionSolutionedModelSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Question
-        fields = ['is_solutioned']

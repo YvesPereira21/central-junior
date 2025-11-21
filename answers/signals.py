@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 from django.core.cache import caches
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import pre_save, post_save, post_delete
 from answers.models import Answer
 from questions.models import Question
@@ -11,6 +12,7 @@ cache_view = caches['view_cache']
 def verify_answer_has_solution_accepted(sender, instance, **kwargs):
     if instance.pk is None:
         return
+
     answer = Answer.objects.get(pk=instance.pk)
 
     if instance.is_accepted and not answer.is_accepted:
@@ -37,13 +39,19 @@ def created_answer(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Answer)
 def decrease_reputation_score(sender, instance, **kwargs):
-    author = instance.author
-    alter_is_solutioned(instance, False)
-    new_score = author.reputation_score - 20
-    author.reputation_score = max(0, new_score)
-    author.save(update_fields=['reputation_score'])
+    if instance.is_accepted:
+        author = instance.author
+        try:
+            alter_is_solutioned(instance, False)
+        except ObjectDoesNotExist:
+            pass
 
-    clear_question_cache(instance.question.pk)
+        new_score = author.reputation_score - 20
+        author.reputation_score = max(0, new_score)
+        author.save(update_fields=['reputation_score'])
+
+    if instance.question_id:
+        clear_question_cache(instance.question_id)
 
 def alter_is_solutioned(answer: Answer, state: bool):
     question = answer.question

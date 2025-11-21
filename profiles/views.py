@@ -29,8 +29,15 @@ class UserProfileCreateView(generics.CreateAPIView):
     tags=['Profile (Perfil)']
 )
 class UserProfileDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserProfile.objects.all()
-    http_method_names = ['get', 'put', 'delete', 'options', 'head']
+    http_method_names = ['get', 'put', 'patch', 'delete', 'options', 'head']
+
+    def get_queryset(self):
+        return UserProfile.objects.all().annotate(
+            articles_written=Count('article_author', distinct=True),
+            answers_accepted=Count('answer_author',
+                                   filter=Q(answer_author__is_accepted=True),
+                                   distinct=True)
+        )
 
     def get_serializer_class(self):
         if self.request.method == 'GET':

@@ -4,6 +4,8 @@ services:
     restart: always
     ports:
       - "8000:8000"
+    volumes:
+      - .:/central_junior
     depends_on:
       - central_junior_db
       - central_junior_redis
