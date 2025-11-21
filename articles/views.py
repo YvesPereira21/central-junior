@@ -2,10 +2,11 @@ from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import caches
 from rest_framework import generics, serializers, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from drf_spectacular.utils import extend_schema
+from app.exceptions import ObjectNotFound
 from articles.models import Article
 from articles.serializers import ArticleModelSerializer, ArticleDetailModelSerializer
 from articles.filters import ArticleFilter
@@ -19,13 +20,26 @@ cache_view = caches['view_cache']
     tags=['Article (Artigo)']
 )
 class ArticleListCreateView(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
-    permission_classes = [IsAuthenticated]
+    queryset = Article.objects.filter(is_published=True)
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = ArticleFilter
     search_fields = ['title', 'content']
     ordering = ['-created_at']
+    
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated()]
 
+        return [AllowAny()]
+    
+    def get_object(self):
+        obj = super().get_object()
+
+        if not obj.is_published:
+            raise ObjectNotFound()
+
+        return obj
+    
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return ArticleModelSerializer
@@ -58,6 +72,20 @@ class ArticleDetailDeleteView(generics.RetrieveDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleDetailModelSerializer
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+
+        return [IsOwner()]
+    
+    def get_object(self):
+        obj = super().get_object()
+
+        if not obj.is_published:
+            raise ObjectNotFound()
+
+        return obj
+    
     def retrieve(self, request,*args, **kwargs):
         pk = self.kwargs.get('pk')
         key = f"article_{pk}"
@@ -72,7 +100,6 @@ class ArticleDetailDeleteView(generics.RetrieveDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         pk = self.kwargs.get('pk')
-
         response = super().destroy(request, *args, **kwargs)
 
         if response.status_code == status.HTTP_204_NO_CONTENT:
@@ -80,12 +107,6 @@ class ArticleDetailDeleteView(generics.RetrieveDestroyAPIView):
             cache_view.delete(f"article_{pk}")
 
         return response
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [IsAuthenticated()]
-
-        return [IsOwner()]
 
 @extend_schema(
     tags=['Article (Artigo)']

@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from profiles.models import UserProfile
 
 
-USER_LEVEL = {0: "Iniciante", 500: 'Intermediário', 1000: "Especialista", 2000: "Elite"}
+USER_LEVEL = {0: "Iniciante", 500: 'Intermediário', 1000: 'Especialista', 2000: 'Elite'}
 
 @receiver(post_save, sender=UserProfile)
 def change_level_user_profile(sender, instance, created, **kwargs):

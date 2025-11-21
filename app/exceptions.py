@@ -4,7 +4,12 @@ from rest_framework import status
 
 class AnswerAlreadyAccepted(APIException):
     status_code = status.HTTP_409_CONFLICT
-    default_detail = 'Essa resposta já foi aceita.'
+    default_detail = 'Esta pergunta já possui uma solução aceita.'
+    default_code = 'conflito'
+
+class CredentialAlreadyAccepted(APIException):
+    status_code = status.HTTP_409_CONFLICT
+    default_detail = 'Esta credencial já foi verificada como verídica. Não é possível fazer alteração nela'
     default_code = 'conflito'
 
 class InvalidData(APIException):

@@ -7,7 +7,7 @@ from articles.models import Article
 cache_view = caches['view_cache']
 
 @receiver(post_save, sender=Article)
-def implement_points(sender, instance, created, **kwargs):
+def add_points(sender, instance, created, **kwargs):
     clear_article_cache(instance)
 
     if created:
@@ -18,6 +18,7 @@ def implement_points(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=Article)
 def decrease_points(sender, instance, **kwargs):
     clear_article_cache(instance)
+
     profile = instance.author
     new_score= profile.reputation_score - 20
     profile.reputation_score = max(0, new_score)

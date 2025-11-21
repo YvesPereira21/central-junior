@@ -23,6 +23,9 @@ def detect_verification_change(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Credential)
 def transform_in_professional(sender, instance, created, **kwargs):
+    if created:
+        return
+
     was_just_verified = getattr(instance, '_verification_changed_to_true', False)
     was_just_revoked = getattr(instance, '_verification_revoked', False)
     profile = instance.profile

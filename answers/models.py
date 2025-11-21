@@ -9,7 +9,16 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='answer_author')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
-    upvotes = models.ManyToManyField(UserProfile, related_name='upvote', null=True, blank=True)
+    upvotes = models.ManyToManyField(UserProfile, related_name='upvote')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['question'],
+                condition=models.Q(is_accepted=True),
+                name='unique_accepted_answer_per_question'
+            )
+        ]
 
     def __str__(self) -> str:
         return f'Resposta de {self.author.user.first_name}, no dia {self.created_at}'

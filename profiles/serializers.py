@@ -44,6 +44,8 @@ class UserProfileDetailModelSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     credentials = CredentialDetailModelSerializer(many=True, read_only=True)
+    articles_written = serializers.IntegerField(read_only=True)
+    answers_accepted = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = UserProfile

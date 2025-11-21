@@ -11,7 +11,7 @@ class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='author')
     technologies = models.ManyToManyField(Technology, related_name='question_tags')
-    likes = models.ManyToManyField(UserProfile, related_name='question_likes', null=True, blank=True)
+    likes = models.ManyToManyField(UserProfile, related_name='question_likes')
 
     def __str__(self) -> str:
         return self.title

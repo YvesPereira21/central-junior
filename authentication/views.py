@@ -15,7 +15,7 @@ class LogoutView(APIView):
 
     def post(self, request):
         try:
-            refresh_token = request.data.get('refresh_token')
+            refresh_token = request.data.get('refresh')
             token = RefreshToken(refresh_token)
 
             token_jti = token.get('jti')
@@ -36,7 +36,7 @@ class LogoutView(APIView):
 class CustomTokenRefreshView(TokenRefreshView):
 
     def post(self, request, *args, **kwargs):
-        refresh_token = request.data.get('refresh_token')
+        refresh_token = request.data.get('refresh')
         if refresh_token:
             try:
                 token_payload = jwt.decode(refresh_token, options={"verify_signature": False})
