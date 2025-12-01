@@ -39,8 +39,7 @@ class UserProfileUpdateModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['pk', 'first_name', 'last_name', 'bio', 'avatar', 'expertise']
-        extra_kwargs = {'pk': {'read_only': True}}
+        fields = ['first_name', 'last_name', 'bio', 'avatar', 'expertise']
 
 
 class UserProfileDetailModelSerializer(serializers.ModelSerializer):
@@ -52,10 +51,8 @@ class UserProfileDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['pk', 'first_name', 'last_name', 'bio', 'avatar', 'expertise', 'reputation_score',
+        fields = ['first_name', 'last_name', 'bio', 'avatar', 'expertise', 'reputation_score',
                   'articles_written', 'answers_accepted', 'is_professional', 'credentials']
-        extra_kwargs = {'pk': {'read_only': True}}
-
 
 class UserProfileDeleteModelSerializer(serializers.ModelSerializer):
 

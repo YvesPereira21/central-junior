@@ -1,4 +1,5 @@
 from django.dispatch import receiver
+from django.db.models import F
 from django.core.cache import caches
 from django.db.models.signals import post_save, post_delete
 from articles.models import Article
@@ -13,7 +14,7 @@ def add_points(sender, instance, created, **kwargs):
 
     if created:
         profile = instance.author
-        profile.reputation_score += 20
+        profile.reputation_score += F('reputation_score') + 20
         profile.save(update_fields=['reputation_score'])
 
 
